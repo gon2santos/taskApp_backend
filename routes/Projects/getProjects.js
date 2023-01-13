@@ -16,17 +16,11 @@ const express_1 = require("express");
 const projects_1 = __importDefault(require('../../db/models/projects'));
 const router = (0, express_1.Router)();
 
-router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-
-    let { name } = req.body;
+router.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (typeof name === "string")
-            name = name;//.toLocaleLowerCase();
-        const project = new projects_1.default({
-            name: name,
-        });
-        const savedProject = yield project.save();
-        res.status(200).send(savedProject);
+        yield projects_1.default.find()
+            .populate("tasks", "name -_id")
+            .then((projects) => res.status(200).send(projects));
     }
     catch (err) {
         console.log(err);
