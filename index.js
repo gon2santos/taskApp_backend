@@ -1,31 +1,21 @@
-var express = require('express');
-const cors = require("cors");
-var mongoose = require('mongoose');
-var dotenv = require('dotenv');
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+  return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+
+//const express = require('express');
+const app_1 = __importDefault(require("./app"));
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 const config = require('./db/db_config');
 
 dotenv.config();
 
-var app = express();
-
-app.use(cors()); //i.e: app.use(cors({ origin: /(.*\.)?victoria-lo.github\.io.*/ }));
-
-app.get('/', (req, res) => {
-    console.log('requirieron /');
-    res.send('Estoy en /');
-})
-
-app.get('/projects', (req, res) => {
-    console.log('requirieron /projects');
-    res.send('Estoy en /projects');
-})
-
 //=======START SERVER=======//
-app.listen(process.env.PORT, () => {
-    console.log(
-      `Successfully started the server, listening on port: ${process.env.PORT}`
-    );
-  });
+app_1.default.listen(process.env.PORT, () => {
+  console.log(`Successfully started the server, listening on port: ${process.env.PORT}`);
+});
 
 //=======CONNECT TO DB=======//
 mongoose.set('strictQuery', true);
