@@ -10,11 +10,13 @@ const router = (0, express_1.Router)();
 const postProjects_1 = __importDefault(require("./Projects/postProjects"));
 const getProjects_1 = __importDefault(require("./Projects/getProjects"));
 const postTasks_1 = __importDefault(require("./Tasks/postTasks"));
+const getTasks_1 = __importDefault(require("./Tasks/getTasks"));
 
 
 /* ============PRODUCTS============ */
 router.use("/projects", postProjects_1.default);
 router.use("/projects", getProjects_1.default);
 router.use("/tasks", postTasks_1.default);
+router.use("/tasks", getTasks_1.default);
 
 exports.default = router;

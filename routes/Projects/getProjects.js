@@ -19,7 +19,7 @@ const router = (0, express_1.Router)();
 router.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield projects_1.default.find()
-            .populate("tasks", "name -_id")
+            //.populate("tasks", "name -_id")
             .then((projects) => res.status(200).send(projects));
     }
     catch (err) {
