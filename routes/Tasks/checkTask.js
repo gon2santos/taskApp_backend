@@ -13,33 +13,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const projects_1 = __importDefault(require('../../db/models/projects'));
+const projects_1 = __importDefault(require("../../db/models/projects"));
+
 const router = (0, express_1.Router)();
 
-router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/check", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { projectId, taskId } = req.body;
     try {
-        yield projects_1.default.find()
-            .populate("tasks", "name").lean()
-            .then((projects) => {
-                var orderedQueue = [];
-                var e = 0;
-                var i = 0;
-                var hasTasksinlevel = true;
-                while (hasTasksinlevel) {
-                    hasTasksinlevel = false;
-                    for (i = 0; i < projects.length; i++) {
-                        if (projects[i].tasks[e]) {
-                            var obj = projects[i].tasks[e];
-                            obj.proj_id = projects[i]._id;
-                            orderedQueue.push(obj);
-                            hasTasksinlevel = true;
-                        }
-                    }
-                    e++;
-                }
-                return orderedQueue;
-            })
-            .then((result) => res.status(200).send(result))
+        yield projects_1.default.findById(projectId)
+            .then((project) => {
+            project.tasks.pull(taskId);
+            return project.save();
+        })
+            .then((savedProject) => res.status(200).send(savedProject));
     }
     catch (err) {
         console.log(err);
