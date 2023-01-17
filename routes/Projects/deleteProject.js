@@ -19,25 +19,20 @@ const tasks_1 = __importDefault(require("../../db/models/tasks"));
 
 const router = (0, express_1.Router)();
 
-router.delete("/check", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { projectId, taskId, projQtty } = req.body;
+router.delete("/delete", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { projectId } = req.body;
+    var tasksIds = [];
     try {
-        yield tasks_1.default.findOneAndDelete({ _id: taskId })
+        yield projects_1.default.findById(projectId)
+            .then(proj => tasks_1.default.deleteMany({ _id: { $in: proj.tasks } }))
+            .then(() => projects_1.default.deleteOne({ _id: projectId }))
             .then(() => currProject_1.default.findOne())
             .then(currProj => {
-                if (currProj.num + 1 === projQtty)
-                    currProj.num = 0;
-                else
-                    currProj.num = currProj.num + 1
+                currProj.num = 0;
                 return currProj
             })
             .then(result => result.save())
-            .then(() => projects_1.default.findById(projectId))
-            .then((project) => {
-                project.tasks.pull(taskId);
-                return project.save();
-            })
-            .then((savedProject) => res.status(200).send(savedProject));
+            .then(() => res.status(200).send(`Project deleted`));
     }
     catch (err) {
         console.log(err);

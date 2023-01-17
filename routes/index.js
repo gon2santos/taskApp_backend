@@ -8,6 +8,7 @@ const router = (0, express_1.Router)();
 
 /* ============PRODUCTS FILES============ */
 const postProjects_1 = __importDefault(require("./Projects/postProjects"));
+const deleteProjects_1 = __importDefault(require("./Projects/deleteProject"));
 const getProjects_1 = __importDefault(require("./Projects/getProjects"));
 const getCurrProject_1 = __importDefault(require("./Projects/getCurrentProject"));
 const putCurrProject_1 = __importDefault(require("./Projects/putCurrentProject"));
@@ -24,6 +25,7 @@ router.use("/projects", getProjects_1.default);
 router.use("/projects", getCurrProject_1.default);
 router.use("/projects", putCurrProject_1.default);
 router.use("/projects", createCurrProject_1.default);
+router.use("/projects", deleteProjects_1.default);
 router.use("/tasks", postTasks_1.default);
 router.use("/tasks", getTasks_1.default);
 router.use("/tasks", checkTask_1.default);
