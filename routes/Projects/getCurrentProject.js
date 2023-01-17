@@ -19,7 +19,7 @@ const router = (0, express_1.Router)();
 router.get("/current", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield currProject_1.default.findOne().lean()
-            .then((result) => res.send({currProj: result.num}));
+            .then((result) => res.send({num: result.num}));
     }
     catch (err) {
         console.log(err);

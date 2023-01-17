@@ -21,7 +21,7 @@ router.put("/current", (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         yield currProject_1.default.findOne()
         .then(currProj => {
-            num ? (currProj.num = num) : {}
+            currProj.num = num
             return currProj
         })
         .then(result => result.save())

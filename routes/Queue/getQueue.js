@@ -14,12 +14,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const projects_1 = __importDefault(require('../../db/models/projects'));
+const currentProject_1 = __importDefault(require('../../db/models/currProject'));
 const router = (0, express_1.Router)();
 
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { currProj } = req.body; //keeps track of the current project
+    var currentProject;
     try {
-        yield projects_1.default.find()
+        yield currentProject_1.default.findOne()
+        .then(foundRes => currentProject = foundRes.num)
+        .then(() =>{
+            projects_1.default.find()
             .populate("tasks", "name").lean()
             .then((projects) => {
                 var orderedQueue = [];
@@ -28,7 +32,7 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 var hasTasksinlevel = true;
                 while (hasTasksinlevel) {
                     hasTasksinlevel = false;
-                    for (i = currProj; i < projects.length; i++) {
+                    for (i = currentProject; i < projects.length; i++) {
                         if (projects[i].tasks[e]) {
                             var obj = projects[i].tasks[e];
                             obj.proj_id = projects[i]._id;
@@ -36,12 +40,14 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                             hasTasksinlevel = true;
                         }
                     }
-                    currProj = 0;
+                    currentProject = 0;
                     e++;
                 }
                 return orderedQueue;
             })
             .then((result) => res.status(200).send(result))
+        })
+        
     }
     catch (err) {
         console.log(err);

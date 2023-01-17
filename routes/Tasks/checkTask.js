@@ -14,17 +14,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const projects_1 = __importDefault(require("../../db/models/projects"));
+const currProject_1 = __importDefault(require('../../db/models/currProject'));
 
 const router = (0, express_1.Router)();
 
 router.delete("/check", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { projectId, taskId } = req.body;
+    let { projectId, taskId, projQtty } = req.body;
     try {
-        yield projects_1.default.findById(projectId)
+        yield currProject_1.default.findOne()
+            .then(currProj => {
+                if(currProj.num + 1 === projQtty)
+                currProj.num = 0;
+                else
+                currProj.num = currProj.num + 1
+                return currProj
+            })
+            .then(result => result.save())
+            .then(() => projects_1.default.findById(projectId)) 
             .then((project) => {
-            project.tasks.pull(taskId);
-            return project.save();
-        })
+                project.tasks.pull(taskId);
+                return project.save();
+            })
             .then((savedProject) => res.status(200).send(savedProject));
     }
     catch (err) {
