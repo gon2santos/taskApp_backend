@@ -17,6 +17,7 @@ const projects_1 = __importDefault(require('../../db/models/projects'));
 const router = (0, express_1.Router)();
 
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { currProj } = req.body; //keeps track of the current project
     try {
         yield projects_1.default.find()
             .populate("tasks", "name").lean()
@@ -27,7 +28,7 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 var hasTasksinlevel = true;
                 while (hasTasksinlevel) {
                     hasTasksinlevel = false;
-                    for (i = 0; i < projects.length; i++) {
+                    for (i = currProj; i < projects.length; i++) {
                         if (projects[i].tasks[e]) {
                             var obj = projects[i].tasks[e];
                             obj.proj_id = projects[i]._id;
@@ -35,6 +36,7 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                             hasTasksinlevel = true;
                         }
                     }
+                    currProj = 0;
                     e++;
                 }
                 return orderedQueue;
