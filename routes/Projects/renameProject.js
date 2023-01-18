@@ -14,25 +14,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const projects_1 = __importDefault(require("../../db/models/projects"));
-const currProject_1 = __importDefault(require('../../db/models/currProject'));
-const tasks_1 = __importDefault(require("../../db/models/tasks"));
 
 const router = (0, express_1.Router)();
 
-router.delete("/delete", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { projectId } = req.body;
-    var tasksIds = [];
+router.put("/rename", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { projectId, name } = req.body;
     try {
         yield projects_1.default.findById(projectId)
-            .then(proj => proj.tasks.length ? tasks_1.default.deleteMany({ _id: { $in: proj.tasks } }) : {})
-            .then(() => projects_1.default.deleteOne({ _id: projectId }))
-            .then(() => currProject_1.default.findOne())
-            .then(currProj => {
-                currProj.num = 0;
-                return currProj
-            })
-            .then(result => result.save())
-            .then(() => res.status(200).send({msg: "OK"}));
+        .then(proj => {
+            proj.name = name
+            return proj
+        })
+        .then(result => result.save())
+        .then(savedProj => res.status(200).send({msg: "project renamed ok"}))
     }
     catch (err) {
         console.log(err);
