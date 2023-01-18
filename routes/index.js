@@ -17,6 +17,8 @@ const renameProject_1 = __importDefault(require("./Projects/renameProject"));
 const postTasks_1 = __importDefault(require("./Tasks/postTasks"));
 const getTasks_1 = __importDefault(require("./Tasks/getTasks"));
 const checkTask_1 = __importDefault(require("./Tasks/checkTask"));
+const renameTask_1 = __importDefault(require("./Tasks/renameTask"));
+const deleteTask_1 = __importDefault(require("./Tasks/deleteTask"));
 const getQueue_1 = __importDefault(require("./Queue/getQueue"));
 
 
@@ -31,6 +33,8 @@ router.use("/projects", renameProject_1.default);
 router.use("/tasks", postTasks_1.default);
 router.use("/tasks", getTasks_1.default);
 router.use("/tasks", checkTask_1.default);
+router.use("/tasks", renameTask_1.default);
+router.use("/tasks", deleteTask_1.default);
 router.use("/queue", getQueue_1.default);
 
 exports.default = router;
