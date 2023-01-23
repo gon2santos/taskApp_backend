@@ -20,6 +20,8 @@ const checkTask_1 = __importDefault(require("./Tasks/checkTask"));
 const renameTask_1 = __importDefault(require("./Tasks/renameTask"));
 const deleteTask_1 = __importDefault(require("./Tasks/deleteTask"));
 const getQueue_1 = __importDefault(require("./Queue/getQueue"));
+const createUser_1 = __importDefault(require("./Users/createUser"));
+const loginUser_1 = __importDefault(require("./Users/loginUser"));
 
 
 /* ============PRODUCTS============ */
@@ -36,5 +38,7 @@ router.use("/tasks", checkTask_1.default);
 router.use("/tasks", renameTask_1.default);
 router.use("/tasks", deleteTask_1.default);
 router.use("/queue", getQueue_1.default);
+router.use("/users", createUser_1.default);
+router.use("/users", loginUser_1.default);
 
 exports.default = router;
