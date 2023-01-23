@@ -27,7 +27,7 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
             email = email.toLocaleLowerCase();
         const user = yield users_1.default.findOne({ email: email })
         if (!user) {
-            res.status(400).send({ msg: "USER_NOT_FOUND" });
+            res.send({ msg: "USER_NOT_FOUND" });
         } else {
             if (yield bcrypt.compare(req.body.pwd, user.pwd)){
                 const accessToken = jwt.sign({email: email}, process.env.ACCESS_TOKEN_SECRET)
