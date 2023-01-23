@@ -31,10 +31,10 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         } else {
             if (yield bcrypt.compare(req.body.pwd, user.pwd)){
                 const accessToken = jwt.sign({email: email}, process.env.ACCESS_TOKEN_SECRET)
-                res.send({ msg: "SUCCESS", accessToken: accessToken });
+                res.send({ msg: "LOGIN_SUCCESS", accessToken: accessToken });
             }
             else
-                res.send({ msg: "FAIL" });
+                res.send({ msg: "LOGIN_FAIL" });
         }
     }
     catch (err) {
