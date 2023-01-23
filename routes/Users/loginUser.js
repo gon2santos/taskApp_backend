@@ -16,6 +16,8 @@ const express_1 = require("express");
 const users_1 = __importDefault(require('../../db/models/users'));
 const router = (0, express_1.Router)();
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const dotenv = require('dotenv');
 
 router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 
@@ -27,8 +29,10 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (!user) {
             res.status(400).send({ msg: "USER_NOT_FOUND" });
         } else {
-            if (yield bcrypt.compare(req.body.pwd, user.pwd))
-                res.send({ msg: "SUCCESS" });
+            if (yield bcrypt.compare(req.body.pwd, user.pwd)){
+                const accessToken = jwt.sign({email: email}, process.env.ACCESS_TOKEN_SECRET)
+                res.send({ msg: "SUCCESS", accessToken: accessToken });
+            }
             else
                 res.send({ msg: "FAIL" });
         }

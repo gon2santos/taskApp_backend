@@ -13,10 +13,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const { JsonWebTokenError } = require("jsonwebtoken");
 const projects_1 = __importDefault(require('../../db/models/projects'));
 const router = (0, express_1.Router)();
+const jwt = require("jsonwebtoken");
+const dotenv = require('dotenv');
 
-router.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+
+function AuthToken(req, res, next){
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if(token == null) return res.sendStatus(401);
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, email) => {
+        if(err) return res.sendStatus(403);
+        req.email = email;
+        next()
+    })
+}
+
+
+router.get("/all", AuthToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+
+    const { email } = req.body;
+
     try {
         yield projects_1.default.find()
             .populate("tasks", "name")
