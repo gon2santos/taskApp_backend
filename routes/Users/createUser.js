@@ -33,7 +33,7 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
                 })
             })
             .then(user => user.save())
-            .then(savedUser => res.status(200).send({ msg: "user created" }))
+            .then(savedUser => res.send({ msg: "USER_CREATED" }))
             .catch((err) => {
                 console.log(err);
                 res.status(500).send(err);
