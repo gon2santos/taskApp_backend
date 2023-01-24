@@ -17,9 +17,12 @@ const currProject_1 = __importDefault(require('../../db/models/currProject'));
 const router = (0, express_1.Router)();
 
 router.get("/current", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+
+    let { email } = req.body;
+
     try {
-        yield currProject_1.default.findOne().lean()
-            .then((result) => res.send({num: result.num}));
+        yield currProject_1.default.findOne({user: email}).lean()
+            .then((result) => res.send(result/* {num: result.num} */));
     }
     catch (err) {
         console.log(err);

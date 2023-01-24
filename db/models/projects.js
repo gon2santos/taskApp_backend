@@ -6,6 +6,10 @@ const projectSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    user: {
+        type: String,
+        required: true,
+    },
     tasks: [
         {
             required: true,

@@ -6,6 +6,10 @@ const currProjectSchema = new mongoose_1.Schema({
         type: Number,
         required: true,
     },
+    user: {
+        type: String,
+        required: true,
+    },
 }, {
     versionKey: false,
     timestamps: false,

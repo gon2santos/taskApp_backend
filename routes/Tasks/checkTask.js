@@ -20,10 +20,10 @@ const tasks_1 = __importDefault(require("../../db/models/tasks"));
 const router = (0, express_1.Router)();
 
 router.delete("/check", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { projectId, taskId, projQtty } = req.body;
+    let { projectId, taskId, projQtty, email } = req.body;
     try {
         yield tasks_1.default.findOneAndDelete({ _id: taskId })
-            .then(() => currProject_1.default.findOne())
+            .then(() => currProject_1.default.findOne({user: email}))
             .then(currProj => {
                 if (currProj.num + 1 === projQtty)
                     currProj.num = 0;

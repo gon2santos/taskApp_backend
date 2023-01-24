@@ -17,9 +17,12 @@ const currProject_1 = __importDefault(require('../../db/models/currProject'));
 const router = (0, express_1.Router)();
 
 router.post("/current", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { email } = req.body;
+
     try {
         const currProj = new currProject_1.default({
             num: 0,
+            user: email,
         });
         const savedCurrProject = yield currProj.save();
         res.status(200).send(savedCurrProject);

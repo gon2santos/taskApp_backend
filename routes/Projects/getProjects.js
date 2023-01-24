@@ -33,14 +33,17 @@ function AuthToken(req, res, next){
 }
 
 
-router.get("/all", AuthToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/all", AuthToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 
     const { email } = req.body;
 
+    console.log(`Got this email: ${email}`);
+
     try {
-        yield projects_1.default.find()
+        yield projects_1.default.find({user: email})
             .populate("tasks", "name")
-            .then((projects) => res.status(200).send(projects));
+            .then((projects) => {
+                res.status(200).send(projects)});
     }
     catch (err) {
         console.log(err);

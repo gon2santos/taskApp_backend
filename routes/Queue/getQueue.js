@@ -16,14 +16,32 @@ const express_1 = require("express");
 const projects_1 = __importDefault(require('../../db/models/projects'));
 const currentProject_1 = __importDefault(require('../../db/models/currProject'));
 const router = (0, express_1.Router)();
+const jwt = require("jsonwebtoken");
+const dotenv = require('dotenv');
 
-router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+function AuthToken(req, res, next){
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if(token == null) return res.sendStatus(401);
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, email) => {
+        if(err) return res.sendStatus(403);
+        req.email = email;
+        next()
+    })
+}
+
+
+router.post("/", AuthToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+
+    const { email } = req.body;
+
     var currentProject;
     try {
-        yield currentProject_1.default.findOne()
+        yield currentProject_1.default.findOne({user: email})
         .then(foundRes => currentProject = foundRes.num)
         .then(() =>{
-            projects_1.default.find()
+            projects_1.default.find({user: email})
             .populate("tasks", "name").lean()
             .then((projects) => {
                 var orderedQueue = [];
