@@ -16,11 +16,12 @@ const express_1 = require("express");
 const projects_1 = __importDefault(require("../../db/models/projects"));
 const currProject_1 = __importDefault(require('../../db/models/currProject'));
 const tasks_1 = __importDefault(require("../../db/models/tasks"));
+const queue_1 = __importDefault(require('../../db/models/queue'));
 
 const router = (0, express_1.Router)();
 
 router.delete("/delete", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { projectId, taskId } = req.body;
+    let { projectId, taskId, email } = req.body;
     try {
         yield tasks_1.default.findOneAndDelete({ _id: taskId })
             .then(() => projects_1.default.findById(projectId))
@@ -28,7 +29,15 @@ router.delete("/delete", (req, res) => __awaiter(void 0, void 0, void 0, functio
                 project.tasks.pull(taskId);
                 return project.save();
             })
-            .then((savedProject) => res.status(200).send({msg: "task delete ok"}));
+            .then(() => queue_1.default.findOne({ user: email })) 
+            .then((result) => {
+                var aux = result.tasks;
+                aux = aux.filter(e => e._id != taskId);
+                result.tasks = aux;
+                return result;
+            })
+            .then((newQueue) => newQueue.save())
+            .then(() => res.status(200).send({msg: "task delete ok"}));
     }
     catch (err) {
         console.log(err);

@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const projects_1 = __importDefault(require("../../db/models/projects"));
 const currProject_1 = __importDefault(require('../../db/models/currProject'));
+const queue_1 = __importDefault(require('../../db/models/queue'));
 const tasks_1 = __importDefault(require("../../db/models/tasks"));
 
 const router = (0, express_1.Router)();
@@ -23,21 +24,18 @@ router.delete("/check", (req, res) => __awaiter(void 0, void 0, void 0, function
     let { projectId, taskId, projQtty, email } = req.body;
     try {
         yield tasks_1.default.findOneAndDelete({ _id: taskId })
-            .then(() => currProject_1.default.findOne({user: email}))
-            .then(currProj => {
-                if (currProj.num + 1 === projQtty)
-                    currProj.num = 0;
-                else
-                    currProj.num = currProj.num + 1
-                return currProj
-            })
-            .then(result => result.save())
             .then(() => projects_1.default.findById(projectId))
             .then((project) => {
                 project.tasks.pull(taskId);
                 return project.save();
             })
-            .then((savedProject) => res.status(200).send(savedProject));
+            .then(() => queue_1.default.findOne({ user: email })) 
+            .then((result) => {
+                result.tasks.shift()
+                return result;
+            })
+            .then((newQueue) => newQueue.save())
+            .then(() => res.status(200).send({msg: "TASK_CHECKED"}));
     }
     catch (err) {
         console.log(err);

@@ -37,8 +37,6 @@ router.post("/all", AuthToken, (req, res) => __awaiter(void 0, void 0, void 0, f
 
     const { email } = req.body;
 
-    console.log(`Got this email: ${email}`);
-
     try {
         yield projects_1.default.find({user: email})
             .populate("tasks", "name")

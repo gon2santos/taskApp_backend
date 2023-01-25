@@ -33,13 +33,40 @@ function AuthToken(req, res, next) {
 }
 
 
-router.put("/", AuthToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", AuthToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 
     const { email } = req.body;
 
+    var currentProject = 0;
+
+    var orderedQueue;
+
     try {
-        yield queue_1.default.findOne({ user: email }).lean()
-            .then(foundQueue => res.status(200).send(foundQueue.tasks ))
+        yield projects_1.default.find({ user: email })
+            .populate("tasks", "name").lean()
+            .then((projects) => {
+                var resQueue = [];
+                var e = 0;
+                var i = 0;
+                var hasTasksinlevel = true;
+                while (hasTasksinlevel) {
+                    hasTasksinlevel = false;
+                    for (i = currentProject; i < projects.length; i++) {
+                        if (projects[i].tasks[e]) {
+                            var obj = projects[i].tasks[e];
+                            obj.proj_id = projects[i]._id;
+                            resQueue.push(obj);
+                            hasTasksinlevel = true;
+                        }
+                    }
+                    currentProject = 0;
+                    e++;
+                }
+                orderedQueue = resQueue;
+                return resQueue;
+            })
+            .then(() => queue_1.default.findOneAndUpdate({ user: email }, { $set: { tasks: orderedQueue } }, { upsert: true }))
+            .then(savedqueue => res.status(200).send({ msg: "QUEUE_REMADE" }))
             .catch(err => {
                 console.log(err)
                 res.status(500).send(err);
