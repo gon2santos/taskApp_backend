@@ -14,20 +14,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const tasks_1 = __importDefault(require('../../db/models/tasks'));
+const queue_1 = __importDefault(require('../../db/models/queue'));
 const router = (0, express_1.Router)();
 
 router.put("/rename", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 
-    let { taskId, name } = req.body;
+    let { taskId, name, email } = req.body;
 
     try {
         yield tasks_1.default.findById(taskId)
-        .then(tsk => {
-            tsk.name = name
-            return tsk
-        })
-        .then(result => result.save())
-        .then(savedProj => res.status(200).send({msg: "tsk renamed ok"}))
+            .then(tsk => {
+                tsk.name = name
+                return tsk
+            })
+            .then(result => result.save())
+            .then(() => queue_1.default.findOne({ user: email }))
+            .then((result) => {
+                var aux = result.tasks;
+                aux = aux.map(e => {
+                    if (e._id == taskId) {
+                        e.name = name;
+                    }
+                    return e;
+                });
+                result.tasks = aux;
+                console.log(JSON.stringify(result.tasks));
+                result.markModified('tasks');
+                return result;
+            })
+            .then((newQueue) => newQueue.save())
+            .then(() => res.status(200).send({ msg: "tsk renamed ok" }))
+            .catch(err => console.log(err))
     }
     catch (err) {
         console.log(err);
